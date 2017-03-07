@@ -21,7 +21,6 @@ private:
     QString m_file;
     QFile m_fileHandle;
     quint32 m_address = 0;
-    quint32 m_codeOffset = 0; // TODO: Load this from XML.
     QMfgToolMemorySection m_loadSection = MemSectionOTH;
     QMfgToolMemorySection m_setSection = MemSectionOTH;
     bool m_hasFlashHeader = false;

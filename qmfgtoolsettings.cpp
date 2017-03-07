@@ -149,10 +149,26 @@ bool QMfgToolSettings::load()
                     return false;
                 }
 
-                // TODO: Add regex to validate pid/vid values.
+                QRegExp regexp("^[0-9A-Z]{4}$");
+                QString vidStr, pidStr;
 
-                dev.vid = static_cast<quint16>(childElement.attribute(QStringLiteral("vid")).toInt(nullptr, 16));
-                dev.pid = static_cast<quint16>(childElement.attribute(QStringLiteral("pid")).toInt(nullptr, 16));
+                regexp.setCaseSensitivity(Qt::CaseInsensitive);
+
+                vidStr = childElement.attribute(QStringLiteral("vid"));
+                pidStr = childElement.attribute(QStringLiteral("vid"));
+
+                if (regexp.indexIn(vidStr) != 0)
+                {
+                    return false;
+                }
+
+                if (regexp.indexIn(pidStr) != 0)
+                {
+                    return false;
+                }
+
+                dev.vid = static_cast<quint16>(vidStr.toInt(nullptr, 16));
+                dev.pid = static_cast<quint16>(pidStr.toInt(nullptr, 16));
 
                 m_devices.append(dev);
             }

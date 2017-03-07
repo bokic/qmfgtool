@@ -141,7 +141,11 @@ QMfgToolSettingsDeviceChipFamily QMfgToolDevice::deviceChipFamily(const QString 
 
     nameVal = name.trimmed().toUpper();
 
-    if (nameVal == QStringLiteral("MX6Q"))
+    if (nameVal == QStringLiteral("MX50"))
+    {
+        return MX50;
+    }
+    else if (nameVal == QStringLiteral("MX6Q"))
     {
         return MX6Q;
     }
@@ -170,5 +174,5 @@ QMfgToolSettingsDeviceChipFamily QMfgToolDevice::deviceChipFamily(const QString 
         return MX6ULL;
     }
 
-    return MX50; // WARNING: Possible incorrect value.
+    return UNKNOWN;
 }

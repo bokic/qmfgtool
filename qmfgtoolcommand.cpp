@@ -109,7 +109,7 @@ bool QMfgToolCommand::sendData(QMfgToolDevice &device, const char data[], qint32
 
     tmp[0] = REPORT_ID_DATA;
 
-    memcpy(tmp.data() + 1, data, count);
+    memcpy(tmp.data() + 1, data, static_cast<size_t>(count));
 
     if (!device.write(tmp))
     {
@@ -142,7 +142,7 @@ QByteArray QMfgToolCommand::packSDPCmd(const SDPCmd &cmd) const
 
     ret[0] = REPORT_ID_SDP_CMD;
 
-    quint32 *pTmpSDPCmd = (quint32 *)(ret.data() + 1);
+    quint32 *pTmpSDPCmd = reinterpret_cast<quint32 *>(ret.data() + 1);
 
     pTmpSDPCmd[0] = (((cmd.address  & 0x00FF0000) << 8)
                   | ((cmd.address   & 0xFF000000) >> 8)
@@ -181,8 +181,8 @@ bool QMfgToolCommand::getHABType(QMfgToolDevice &device) const
         //LogMsg(LOG_MODULE_MFGTOOL_LIB, LOG_LEVEL_FATAL_ERROR, _T("Failed to read HAB type from ROM!!!"));
         return false;
     }
-    if ( (*(quint32 *)(tmp.constData() + 1) != HabEnabled)  &&
-         (*(quint32 *)(tmp.constData() + 1) != HabDisabled) )
+    if ( (*reinterpret_cast<const quint32 *>(tmp.constData() + 1) != HabEnabled)  &&
+         (*reinterpret_cast<const quint32 *>(tmp.constData() + 1) != HabDisabled) )
     {
         //LogMsg(LOG_MODULE_MFGTOOL_LIB, LOG_LEVEL_FATAL_ERROR, _T("HAB type mismatch: 0x%x!!!"), *(unsigned int *)(m_pReadReport->Payload));
         return false;
@@ -203,7 +203,7 @@ bool QMfgToolCommand::getDevAck(QMfgToolDevice &device, quint32 value) const
         return false;
     }
 
-    if (*(quint32 *)(tmp.constData() + 1) != value)
+    if (*reinterpret_cast<const quint32 *>(tmp.constData() + 1) != value)
     {
         //LogMsg(LOG_MODULE_MFGTOOL_LIB, LOG_LEVEL_FATAL_ERROR, _T("WriteReg(): Invalid write ack: 0x%x\n"), ((PULONG)m_pReadReport)[0]);
         return false;
@@ -233,7 +233,7 @@ bool QMfgToolCommand::transferData(QMfgToolDevice &device, quint32 phyRam, quint
 
     qint32 MaxHidTransSize = 1025 - 1;
 
-    int chunks = (count % MaxHidTransSize)?((count / MaxHidTransSize)+ 1): (count / MaxHidTransSize);
+    int chunks = (count % MaxHidTransSize)?((count / MaxHidTransSize) + 1): (count / MaxHidTransSize);
 
     for(int c = 0; c < chunks; c++)
     {
